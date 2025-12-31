@@ -27,6 +27,7 @@ public sealed record BoundPrintStatement(BoundExpression Value) : BoundStatement
 public abstract record BoundExpression;
 public sealed record BoundIntExpression(int Value) : BoundExpression;
 public sealed record BoundVariableExpression(int Id) : BoundExpression;
+public sealed record BoundUnaryExpression(TokenKind Operator, BoundExpression Right) : BoundExpression;
 public sealed record BoundBinaryExpression(TokenKind Operator, BoundExpression Left, BoundExpression Right) : BoundExpression;
 
 #endregion

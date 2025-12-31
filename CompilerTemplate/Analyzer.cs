@@ -84,6 +84,19 @@ public static class Binder
                 return new BoundVariableExpression(id);
             }
 
+            case UnaryExpression unaryExpression:
+            {
+                if (unaryExpression.Operator is not TokenKind.Plus and not TokenKind.Minus)
+                {
+                    diagnostics.Add(new(Severity.Error, $"Unknown unary operator '{unaryExpression.Operator}'."));
+                }
+
+                var right = BindExpression(unaryExpression.Right, variables, out var rightDiagnostics);
+                diagnostics.AddRange(rightDiagnostics);
+
+                return new BoundUnaryExpression(unaryExpression.Operator, right);
+            }
+
             case BinaryExpression binaryExpression:
             {
                 if (binaryExpression.Operator is not TokenKind.Plus and not TokenKind.Minus and not TokenKind.Star and not TokenKind.Slash)
@@ -93,7 +106,6 @@ public static class Binder
 
                 var left = BindExpression(binaryExpression.Left, variables, out var leftDiagnostics);
                 var right = BindExpression(binaryExpression.Right, variables, out var rightDiagnostics);
-
                 diagnostics.AddRange([..leftDiagnostics, ..rightDiagnostics]);
 
                 if (binaryExpression.Operator == TokenKind.Slash && right is BoundIntExpression { Value: 0 })

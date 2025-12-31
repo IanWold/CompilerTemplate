@@ -81,6 +81,19 @@ public static class Lowerer
                 return (temp, tempId);
             }
 
+            case BoundUnaryExpression unaryExpression:
+            {
+                (var right, tempId) = WriteExpression(unaryExpression.Right, builder, slots, tempId);
+
+                var zero = Temp(++tempId);
+                builder.AppendLine($"\t{zero} =w copy 0");
+
+                var temp = Temp(++tempId);
+                builder.AppendLine($"\t{temp} =w sub {zero}, {right}");
+
+                return (temp, tempId);
+            }
+
             case BoundBinaryExpression binaryExpression:
             {
                 (var left, tempId) = WriteExpression(binaryExpression.Left, builder, slots, tempId);
