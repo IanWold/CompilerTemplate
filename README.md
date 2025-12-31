@@ -1,4 +1,8 @@
-# Compiler Template
+<div align="center">
+
+# 🔩 Compiler Template
+
+</div>
 
 This is a template for a compiler in C#. It implements a rudimentary language, including a simple CLI with [CommandLineParser](https://github.com/commandlineparser/commandline), [QBE](https://c9x.me/compile/) as a backend, and clang (`cc`) for linking. I've included a Linux QBE compilation for my own ease but this is easy to modify.
 
