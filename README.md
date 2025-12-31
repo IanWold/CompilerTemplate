@@ -10,6 +10,22 @@ Implemented for the rudimenary language are the typical, canonical layers: lexer
 
 The intent is that this is a jumping off point for languages.
 
+### Running
+
+The compiler can be run via:
+
+```
+CompilerTemplate -o program.out
+```
+
+And has an option to specify source directory:
+
+```
+CompilerTemplate -d /home/source/myproject
+```
+
+Or with `.exe` for Windows. A Linux build of QBE is included in the project, if you're using Windows you'll want to swap that out or install QBE. Also, I think `cc` only runs clang on Linux, Windows may want to modify Build.cs.
+
 ### Example Language
 
 The example language includes the following expressions:
