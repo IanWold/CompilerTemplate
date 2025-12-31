@@ -1,0 +1,9 @@
+print 5
+
+identifier = 42
+print identifier
+
+print 5 + 12
+
+identifier = 6/2
+print 2 * identifier
