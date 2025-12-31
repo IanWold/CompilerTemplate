@@ -5,7 +5,9 @@ public static class Parser
     public static AstRoot Parse(this List<Token> tokens)
     {
         var statements = new List<AstStatement>();
-		SkipNewlines(tokens, 0, out int position);
+        var position = 0;
+        
+		while (TryMatch(tokens, position, TokenKind.Newline, out position)) { }
 
         while (Peek(tokens, position).Kind != TokenKind.EOF)
         {
@@ -14,7 +16,7 @@ public static class Parser
 
             if (Peek(tokens, position).Kind == TokenKind.Newline)
             {
-                SkipNewlines(tokens, position, out position);
+                while (TryMatch(tokens, position, TokenKind.Newline, out position)) { }
             }
             else if (Peek(tokens, position).Kind != TokenKind.EOF)
             {
@@ -48,11 +50,6 @@ public static class Parser
         }
 
         return newPosition > position;
-    }
-
-    private static void SkipNewlines(List<Token> tokens, int position, out int newPosition)
-    {
-        while (TryMatch(tokens, position, TokenKind.Newline, out newPosition)) { }
     }
 
     private static (AstStatement, int) ParseStatement(List<Token> tokens, int position)
