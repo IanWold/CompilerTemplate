@@ -130,6 +130,14 @@ public static class Parser
                 continue;
             }
 
+            if (TryMatch(tokens, position, TokenKind.Percent, out position))
+            {
+                (var right, position) = ParseFactor(tokens, position);
+                left = new BinaryExpression(TokenKind.Percent, left, right);
+
+                continue;
+            }
+
             break;
         }
 

@@ -108,7 +108,7 @@ public static class Binder
                 var right = BindExpression(binaryExpression.Right, variables, out var rightDiagnostics);
                 diagnostics.AddRange([..leftDiagnostics, ..rightDiagnostics]);
 
-                if (binaryExpression.Operator == TokenKind.Slash && right is BoundIntExpression { Value: 0 })
+                if (binaryExpression.Operator is TokenKind.Slash or TokenKind.Percent && right is BoundIntExpression { Value: 0 })
                 {
                     diagnostics.Add(new(Severity.Error, "Division by zero."));
                 }

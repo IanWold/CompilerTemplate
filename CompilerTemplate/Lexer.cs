@@ -59,6 +59,7 @@ public static class Lexer
             '-' => new Token(TokenKind.Minus, "-", lastPosition),
             '*' => new Token(TokenKind.Star, "*", lastPosition),
             '/' => new Token(TokenKind.Slash, "/", lastPosition),
+            '%' => new Token(TokenKind.Percent, "%", lastPosition),
             '(' => new Token(TokenKind.LeftParen, "(", lastPosition),
             ')' => new Token(TokenKind.RightParen, ")", lastPosition),
             _ => LexNumberOrIdentifierOrError(source, position, lastPosition, currentChar, out position)

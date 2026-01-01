@@ -89,6 +89,9 @@ public static class ConstantFolder
                 (TokenKind.Slash, var left, BoundIntExpression { Value: 1 }) => left,
                 (TokenKind.Slash, BoundIntExpression leftInt, BoundIntExpression rightInt) => new BoundIntExpression(leftInt.Value / rightInt.Value),
 
+                (TokenKind.Percent, _, BoundIntExpression { Value: 1 }) => new BoundIntExpression(0),
+                (TokenKind.Percent, BoundIntExpression leftInt, BoundIntExpression rightInt) => new BoundIntExpression(leftInt.Value % rightInt.Value),
+
                 var (o, l, r) => new BoundBinaryExpression(o, l, r)
             },
 

@@ -15,6 +15,7 @@ public enum TokenKind
     Minus,
     Star,
     Slash,
+    Percent,
 
     LeftParen,
     RightParen,

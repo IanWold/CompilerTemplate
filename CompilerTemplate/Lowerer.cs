@@ -106,6 +106,7 @@ public static class Lowerer
                     TokenKind.Minus => "sub",
                     TokenKind.Star => "mul",
                     TokenKind.Slash => "div",
+                    TokenKind.Percent => "rem",
                     _ => throw new NotSupportedException($"Unknown operator '{Enum.GetName(binaryExpression.Operator)}'")
                 };
 
