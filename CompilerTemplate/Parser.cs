@@ -74,12 +74,6 @@ public static class Parser
         throw new Exception($"Parse error at pos {Peek(tokens, position).Pos}: expected 'print' or assignment, got {Peek(tokens, position).Kind}");
     }
 
-    // Expression grammar:
-    // expr    := term (('+'|'-') term)*
-    // term    := factor (('*'|'/') factor)*
-    // factor  := ('+'|'-') factor | primary
-    // primary := NUMBER | IDENT | '(' expr ')'
-
     private static (AstExpression, int) ParseExpression(List<Token> tokens, int position)
     {
         (var left, position) = ParseTerm(tokens, position);
