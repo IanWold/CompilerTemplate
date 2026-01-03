@@ -42,15 +42,15 @@ And the following statements:
 BNF:
 
 ```bnf
-<sign> ::= + | -
+<sign>       ::= + | -
 <identifier> ::= <letter> +(<letter> | <digit>)
 
 <expression> ::= <term> +((+ | -) <term>)
-<term> ::= <factor> +((* | /) <factor>)
-<factor> ::= (+ | -) <factor> | <primary>
-<primary> ::= +<digit> | <identifier> | '(' <expression> ')'
+<term>       ::= <factor> +((* | /) <factor>)
+<factor>     ::= (+ | -) <factor> | <primary>
+<primary>    ::= +<digit> | <identifier> | '(' <expression> ')'
 
-<statement> ::= <assignment> | <print>
+<statement>  ::= <assignment> | <print>
 <assignment> ::= <identifier> = <expression>
-<print> ::= print <expression>
+<print>      ::= print <expression>
 ```
