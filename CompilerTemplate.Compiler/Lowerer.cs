@@ -1,5 +1,5 @@
 using System.Text;
-using CompilerTemplate;
+using CompilerTemplate.Compiler;
 
 public static class Lowerer
 {

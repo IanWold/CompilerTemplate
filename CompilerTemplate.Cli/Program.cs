@@ -1,6 +1,6 @@
 ﻿using CommandLine;
-using CompilerTemplate;
+using CompilerTemplate.Cli;
 
-CommandLine.Parser.Default.ParseArguments<Build>(args)
+Parser.Default.ParseArguments<Build>(args)
     .WithParsed(build => build.Execute())
     .WithNotParsed(errors => Console.WriteLine($"Did not understand '{string.Join(" ", args)}'"));

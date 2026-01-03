@@ -4,5 +4,6 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="CompilerTemplate/CompilerTemplate.csproj" />
+  <Project Path="CompilerTemplate.Cli/CompilerTemplate.Cli.csproj" />
+  <Project Path="CompilerTemplate.Compiler/CompilerTemplate.Compiler.csproj" />
 </Solution>

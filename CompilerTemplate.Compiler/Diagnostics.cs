@@ -1,4 +1,4 @@
-namespace CompilerTemplate;
+namespace CompilerTemplate.Compiler;
 
 public enum Severity { Error, Warning }
 

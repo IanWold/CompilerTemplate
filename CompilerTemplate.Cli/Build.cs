@@ -1,8 +1,9 @@
 using System.Diagnostics;
 using System.Text;
 using CommandLine;
+using CompilerTemplate.Compiler;
 
-namespace CompilerTemplate;
+namespace CompilerTemplate.Cli;
 
 [Verb("build", HelpText = "Compile a CompilerTemplate project.")]
 public class Build

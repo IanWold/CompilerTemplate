@@ -12,12 +12,13 @@
   </ItemGroup>
 
   <ItemGroup>
-		<Content Include="qbe">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
 		<Content Include="Program.ct">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../CompilerTemplate.Compiler/CompilerTemplate.Compiler.csproj" />
   </ItemGroup>
 
 </Project>

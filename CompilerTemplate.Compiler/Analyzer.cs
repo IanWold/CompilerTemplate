@@ -1,4 +1,4 @@
-namespace CompilerTemplate;
+namespace CompilerTemplate.Compiler;
 
 public static class Analyzer
 {
