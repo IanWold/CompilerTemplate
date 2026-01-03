@@ -22,3 +22,19 @@ And the following statements:
 
 * **Assignment**: `someVar = 5 - someOtherVar`
 * **Print**: `print biggestVar / someVar`
+
+BNF:
+
+```bnf
+<sign> ::= + | -
+<identifier> ::= <letter> +(<letter> | <digit>)
+
+<expression> ::= <term> +((+ | -) <term>)
+<term> ::= <factor> +((* | /) <factor>)
+<factor> ::= (+ | -) <factor> | <primary>
+<primary> ::= +<digit> | <identifier> | '(' <expression> ')'
+
+<statement> ::= <assignment> | <print>
+<assignment> ::= <identifier> = <expression>
+<print> ::= print <expression>
+```
