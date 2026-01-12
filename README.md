@@ -33,13 +33,15 @@ The example language includes the following expressions:
 * **Integers:** `0`, `123`
 * **Variables:** `someVar`
 * **Arithmetic:** `(5 + someVar) - (8 * someOtherVar)`
+* **Strings:** `"Hello"`
+* **Concatenation:** `"Hello" + "World"`
 
 And the following statements:
 
 * **Assignment**: `someVar = 5 - someOtherVar`
 * **Print**: `print biggestVar / someVar`
 
-BNF:
+BNF (excluding obvious allowances for ignored whitespace):
 
 ```bnf
 <sign>       ::= + | -
@@ -48,7 +50,7 @@ BNF:
 <expression> ::= <term> +((+ | -) <term>)
 <term>       ::= <factor> +((* | /) <factor>)
 <factor>     ::= (+ | -) <factor> | <primary>
-<primary>    ::= +<digit> | <identifier> | '(' <expression> ')'
+<primary>    ::= +<digit> | <identifier> | '(' <expression> ')' | '"' <charExceptQuote> '"'
 
 <statement>  ::= <assignment> | <print>
 <assignment> ::= <identifier> = <expression>

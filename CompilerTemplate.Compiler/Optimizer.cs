@@ -10,7 +10,7 @@ public static class ConstantFolder
 {
     public static BoundAstRoot FoldConstants(this BoundAstRoot root)
     {
-        var constants = new Dictionary<int, int>();
+        var constants = new Dictionary<int, BoundLiteralExpression>();
         var statements = new List<BoundStatement>(root.Statements.Count);
 
         foreach (var statement in root.Statements)
@@ -21,23 +21,24 @@ public static class ConstantFolder
                 {
                     var folded = FoldExpression(assignStatement.Value, constants);
 
-                    if (folded is BoundIntExpression ci)
+                    // TODO: Update to use BoundLiteralExpression instead of just BoundIntExpression
+                    //       Needs to include strings.
+                    if (folded is BoundIntExpression literal)
                     {
-                        constants[assignStatement.Id] = ci.Value;
+                        constants[assignStatement.Id] = literal;
                     }
                     else
                     {
                         constants.Remove(assignStatement.Id);
                     }
 
-                    statements.Add(new BoundAssignStatement(assignStatement.Id, folded));
+                    statements.Add(assignStatement with { Value = folded });
                     break;
                 }
 
                 case BoundPrintStatement printStatement:
                 {
-                    var folded = FoldExpression(printStatement.Value, constants);
-                    statements.Add(new BoundPrintStatement(folded));
+                    statements.Add(new BoundPrintStatement(FoldExpression(printStatement.Value, constants)));
                     break;
                 }
 
@@ -50,14 +51,11 @@ public static class ConstantFolder
         return root with { Statements = statements };
     }
 
-    private static BoundExpression FoldExpression(BoundExpression expression, Dictionary<int, int> constants) => expression switch
+    private static BoundExpression FoldExpression(BoundExpression expression, Dictionary<int, BoundLiteralExpression> constants) => expression switch
     {
-        BoundIntExpression =>
-            expression,
-
         BoundVariableExpression variableExpression =>
-            constants.TryGetValue(variableExpression.Id, out int c)
-            ? new BoundIntExpression(c)
+            constants.TryGetValue(variableExpression.Id, out var literal)
+            ? literal
             : variableExpression,
 
         BoundUnaryExpression u =>
@@ -78,6 +76,8 @@ public static class ConstantFolder
                 (TokenKind.Plus, BoundIntExpression { Value: 0 }, var right) => right,
                 (TokenKind.Plus, BoundIntExpression leftInt, BoundIntExpression rightInt) => new BoundIntExpression(checked(leftInt.Value + rightInt.Value)),
 
+                (TokenKind.Plus, BoundStringExpression { Value: var leftString }, BoundStringExpression { Value: var rightString }) => new BoundStringExpression(leftString + rightString),
+
                 (TokenKind.Minus, var left, BoundIntExpression { Value: 0 }) => left,
                 (TokenKind.Minus, BoundIntExpression leftInt, BoundIntExpression rightInt) => new BoundIntExpression(checked(leftInt.Value - rightInt.Value)),
 
@@ -92,7 +92,7 @@ public static class ConstantFolder
                 (TokenKind.Percent, _, BoundIntExpression { Value: 1 }) => new BoundIntExpression(0),
                 (TokenKind.Percent, BoundIntExpression leftInt, BoundIntExpression rightInt) => new BoundIntExpression(leftInt.Value % rightInt.Value),
 
-                var (o, l, r) => new BoundBinaryExpression(o, l, r)
+                (_, var left, var right) => binaryExpression with { Left = left, Right = right }
             },
 
         _ => expression,

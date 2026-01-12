@@ -1,9 +1,12 @@
 print 5
 
-identifier = 42
-print identifier
+myInt = 42
+print myInt
 
 print 5 + 12
 
-identifier = 6/2
-print 2 * identifier
+myInt = 6/2
+print 2 * myInt
+
+myStr = "Hello, World!"
+print myStr

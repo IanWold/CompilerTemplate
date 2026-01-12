@@ -168,10 +168,16 @@ public static class Parser
             return (new IntExpression(value), position);
         }
 
+        if (Peek(tokens, position).Kind == TokenKind.String)
+        {
+            (var token, position) = Consume(tokens, position, TokenKind.String);
+            return (new StringExpression(token.Text), position);
+        }
+
         if (Peek(tokens, position).Kind == TokenKind.Identifier)
         {
             (var token, position) = Consume(tokens, position, TokenKind.Identifier);
-            return (new VaraibleExpression(token.Text), position);
+            return (new VariableExpression(token.Text), position);
         }
 
         if (TryMatch(tokens, position, TokenKind.LeftParen, out position))

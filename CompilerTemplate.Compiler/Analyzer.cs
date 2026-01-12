@@ -13,7 +13,7 @@ public static class Binder
         var diagnostics = new List<Diagnostic>();
         var bound = new List<BoundStatement>();
 
-        var variables = new List<(int id, string name)?>();
+        var variables = new List<BoundVariableInfo?>();
 
         foreach (var statement in root.Statements)
         {
@@ -27,7 +27,7 @@ public static class Binder
                     var id = GetOrCreateVariableId(assignStatement.Name, variables);
                     if (id == variables.Count)
                     {
-                        variables.Add((id, assignStatement.Name));
+                        variables.Add(new (id, assignStatement.Name, rhs.Type));
                     }
 
                     bound.Add(new BoundAssignStatement(id, rhs));
@@ -49,10 +49,10 @@ public static class Binder
             }
         }
 
-        return new BoundAstRoot(bound, [..variables.Select(p => p!.Value).OrderBy(p => p.id).Select(p => p.name)], diagnostics);
+        return new BoundAstRoot(bound, [..variables.Where(v => v is not null)!], diagnostics);
     }
 
-    private static BoundExpression BindExpression(AstExpression expression, List<(int id, string name)?> variables, out List<Diagnostic> diagnostics)
+    private static BoundExpression BindExpression(AstExpression expression, List<BoundVariableInfo?> variables, out List<Diagnostic> diagnostics)
     {
         diagnostics = [];
 
@@ -68,20 +68,23 @@ public static class Binder
                 return new BoundIntExpression(intExpression.Value);
             }
 
-            case VaraibleExpression variableExpression:
+            case StringExpression stringExpression:
+                return new BoundStringExpression(stringExpression.Value);
+
+            case VariableExpression variableExpression:
             {
-                if (variables.SingleOrDefault(n => n?.name == variableExpression.Name) is not (int id, string))
+                if (variables.SingleOrDefault(n => n?.Name == variableExpression.Name) is not (int id, _, TypeKind type))
                 {
                     diagnostics.Add(new(Severity.Error, $"Use of undefined variable '{variableExpression.Name}'."));
                     return new BoundIntExpression(0);
                 }
 
-                if (!variables.Any(v => v?.id == id))
+                if (!variables.Any(v => v?.Id == id))
                 {
                     diagnostics.Add(new(Severity.Error, $"Variable '{variableExpression.Name}' used before assignment."));
                 }
 
-                return new BoundVariableExpression(id);
+                return new BoundVariableExpression(id, type);
             }
 
             case UnaryExpression unaryExpression:
@@ -113,7 +116,21 @@ public static class Binder
                     diagnostics.Add(new(Severity.Error, "Division by zero."));
                 }
 
-                return new BoundBinaryExpression(binaryExpression.Operator, left, right);
+                var inferredType = left.Type == right.Type
+                    ? left.Type
+                    : TypeKind.Invalid;
+
+                if (inferredType == TypeKind.Invalid)
+                {
+                    diagnostics.Add(new(Severity.Error, "Type mismatch."));
+                }
+
+                if (inferredType == TypeKind.String && binaryExpression.Operator != TokenKind.Plus)
+                {
+                    diagnostics.Add(new(Severity.Error, $"Invalid operation on string: {Enum.GetName(binaryExpression.Operator)}."));
+                }
+
+                return new BoundBinaryExpression(binaryExpression.Operator, inferredType, left, right);
             }
 
             default:
@@ -122,8 +139,8 @@ public static class Binder
         }
     }
 
-    private static int GetOrCreateVariableId(string name, List<(int id, string name)?> variables) =>
-        variables.SingleOrDefault(n => n?.name == name) is (int id, string)
+    private static int GetOrCreateVariableId(string name, List<BoundVariableInfo?> variables) =>
+        variables.SingleOrDefault(n => n?.Name == name) is (int id, _, _)
         ? id
         : variables.Count;
 }

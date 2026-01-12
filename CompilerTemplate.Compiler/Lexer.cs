@@ -62,10 +62,40 @@ public static class Lexer
             '%' => new Token(TokenKind.Percent, "%", lastPosition),
             '(' => new Token(TokenKind.LeftParen, "(", lastPosition),
             ')' => new Token(TokenKind.RightParen, ")", lastPosition),
+            '"' => LexStringLiteral(source, lastPosition, position, out position),
             _ => LexNumberOrIdentifierOrError(source, position, lastPosition, currentChar, out position)
         };
 
         return (token, position);
+    }
+
+    private static Token LexStringLiteral(string source, int firstPosition, int nextPosition, out int newPosition)
+    {
+        newPosition = nextPosition;
+        char currentChar;
+
+        do
+        {
+            if (++newPosition >= source.Length)
+            {
+                throw new Exception($"Lexer error at pos {firstPosition}: unterminated string literal");
+            }
+
+            currentChar = source[newPosition];
+
+            if (currentChar is '\n' or '\r')
+            {
+                throw new Exception($"Lexer error as pos {newPosition}: invalid newline in string literal");
+            }
+
+            if (currentChar == '\\' && (++newPosition >= source.Length || (source[newPosition] is not 't' and not 'r' and not 'n' and not '"' and not '\\')))
+            {
+                throw new Exception($"Lexer error as pos {newPosition}: urecognized escape sequence");
+            }
+        }
+        while (currentChar != '"');
+
+        return new Token(TokenKind.String, source[nextPosition..newPosition++], firstPosition);
     }
 
     private static Token LexNumberOrIdentifierOrError(string source, int position, int lastPosition, char firstChar, out int newPosition)

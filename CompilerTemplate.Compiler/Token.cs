@@ -17,6 +17,8 @@ public enum TokenKind
     Slash,
     Percent,
 
+    String,
+
     LeftParen,
     RightParen,
 }
