@@ -58,15 +58,15 @@ public static class ConstantFolder
             ? literal
             : variableExpression,
 
-        BoundUnaryExpression u =>
-            (u.Operator, FoldExpression(u.Right, constants)) switch
+        BoundUnaryExpression unaryExpression =>
+            (unaryExpression.Operator, FoldExpression(unaryExpression.Right, constants)) switch
             {
                 (TokenKind.Plus, BoundIntExpression { Value: var rightInt }) => new BoundIntExpression(rightInt),
                 (TokenKind.Plus, var right) => right,
                 
                 (TokenKind.Minus, BoundIntExpression { Value: var rightInt }) => new BoundIntExpression(checked(-rightInt)),
 
-                var (o, r) => new BoundUnaryExpression(o, r)
+                var (_, r) => unaryExpression with { Right = r }
             },
 
         BoundBinaryExpression binaryExpression =>

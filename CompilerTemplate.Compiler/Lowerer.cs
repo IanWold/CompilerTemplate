@@ -138,30 +138,38 @@ public static class Lowerer
 
             case BoundBinaryExpression binaryExpression:
             {
-                // TODO: Add support for string concatenation
-                if ((binaryExpression.Left is BoundStringExpression or BoundVariableExpression { Type: TypeKind.String })
-                    || (binaryExpression.Right is BoundStringExpression or BoundVariableExpression { Type: TypeKind.String })
-                )
-                {
-                    throw new NotSupportedException("Compiler has not implemented string concatenation with +");
-                }
-
                 (var left, tempId) = WriteExpression(binaryExpression.Left, builder, strings, slots, tempId);
                 (var right, tempId) = WriteExpression(binaryExpression.Right, builder, strings, slots, tempId);
                 var temp = Temp(++tempId);
 
-                var operation = binaryExpression.Operator switch
+                (string, int) LowerInt()
                 {
-                    TokenKind.Plus => "add",
-                    TokenKind.Minus => "sub",
-                    TokenKind.Star => "mul",
-                    TokenKind.Slash => "div",
-                    TokenKind.Percent => "rem",
-                    _ => throw new NotSupportedException($"Unknown operator '{Enum.GetName(binaryExpression.Operator)}'")
-                };
+                    var operation = binaryExpression.Operator switch
+                    {
+                        TokenKind.Plus => "add",
+                        TokenKind.Minus => "sub",
+                        TokenKind.Star => "mul",
+                        TokenKind.Slash => "div",
+                        TokenKind.Percent => "rem",
+                        _ => throw new NotSupportedException($"Unknown operator '{Enum.GetName(binaryExpression.Operator)}'")
+                    };
 
-                builder.AppendLine($"\t{temp} =w {operation} {left}, {right}");
-                return (temp,tempId);
+                    builder.AppendLine($"\t{temp} =w {operation} {left}, {right}");
+                    return (temp,tempId);
+                }
+
+                (string, int) LowerString()
+                {
+                    // TODO: Add support for string concatenation
+                    throw new NotSupportedException("Compiler has not implemented string concatenation with +");
+                }
+
+                return binaryExpression.Type switch
+                {
+                    TypeKind.String => LowerString(),
+                    TypeKind.Int => LowerInt(),
+                    var unknown => throw new NotSupportedException($"Unknown expression type {Enum.GetName(unknown)}")
+                };
             }
 
             default:
